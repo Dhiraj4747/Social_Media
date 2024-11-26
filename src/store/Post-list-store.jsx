@@ -3,6 +3,7 @@ import { createContext, useReducer } from "react";
 export const PostList = createContext({
   postList: [],
   addPost: () => {},
+  addMultiplePost:()=>{},
   deletePost: () => {},
 });
 
@@ -16,7 +17,8 @@ const postListReducerMethod = (currentPostList, action) => {
     );
   }else if(action.type ==="ADD_POST"){
     newPostList = [action.payload,...currentPostList]
-    
+  }else if (action.type === "ADD_INTIAL_POST"){
+    newPostList = action.payload.posts;
   }
   return newPostList;
 };
@@ -24,7 +26,7 @@ const postListReducerMethod = (currentPostList, action) => {
 const PostListProvider = ({ children }) => {
   const [postList, dispatchPostList] = useReducer(
     postListReducerMethod,
-    DEFAULT_POST_LIST
+    []
   );
 
   const addPost = (userid,posttitle,postbody,postreaction,posttag) => {
@@ -41,6 +43,15 @@ const PostListProvider = ({ children }) => {
     })
   };
 
+  const addMultiplePost = (posts)=>{
+    dispatchPostList({
+      type:"ADD_INTIAL_POST",
+      payload:{
+        posts
+      }
+    })
+  }
+
   const deletePost = (postId) => {
     dispatchPostList({
       type: "Delete Post",
@@ -53,6 +64,7 @@ const PostListProvider = ({ children }) => {
       value={{
         postList,
         addPost,
+        addMultiplePost,
         deletePost,
       }}
     >
@@ -61,23 +73,5 @@ const PostListProvider = ({ children }) => {
   );
 };
 
-const DEFAULT_POST_LIST = [
-  {
-    id: 1,
-    title: "my name is dhiraj",
-    body: "I am becoming the the good developer ",
-    reaction: 1,
-    tags: ["developer", "full-stack", "Leader"],
-    userid: "user-9",
-  },
-  {
-    id: 2,
-    title: "my name is Nikhil",
-    body: "I am becoming the the good developer ",
-    reaction: 2,
-    tags: ["Web-developer", "full-stack"],
-    userid: "user-91",
-  },
-];
 
 export default PostListProvider;
